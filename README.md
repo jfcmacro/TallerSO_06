@@ -3,10 +3,11 @@
 ## Agenda
 
 1. Preliminares
-2. Tuberías nombradas
-3. Proceso demonios
-4. Registro de eventos (log)
-5. Servicios
+2. `tmux`
+3. Tuberías nombradas
+4. Proceso demonios
+5. Registro de eventos (log)
+6. Servicios
 
 ## Preliminares
 
@@ -47,8 +48,10 @@ Adicione los ficheros del proyecto, esto adiciona todos ficheros del taller.
 
 ```bash
 find . -name *.c -exec git add {} \;
+find . -name *.h -exec git add {} \;
 find . -name .keep -exec git add {} \;
 find . -name makefile -exec git add {} \;
+find . -name *.mk -exec git add {} \;
 ```
 
 Acometa (*commit*) el proyecto.
@@ -58,103 +61,137 @@ git commit -m "Iniciando el Taller 06"
 git push
 ```
 
+## `tmux`
+
+* [A Beginner's Guide to `tmux`](https://medium.com/pragmatic-programmers/a-beginners-guide-to-tmux-7e6daa5c0154)
+* [Introduction `tmux` linux](https://www.redhat.com/en/blog/introduction-tmux-linux) 
+
+Abra una sesión en `tmux`
+
+```bash
+tmux
+```
+
+> Explicación del profesor
+
 ## Tuberías nombradas
 
 ### Linux
 
-* [signal(7)](https://man7.org/linux/man-pages/man7/signal.7.html)
-* [signal(2)](https://man7.org/linux/man-pages/man2/signal.2.html)
-* [kill(2)](https://man7.org/linux/man-pages/man2/kill.2.html)
-* [alarm(2)](https://man7.org/linux/man-pages/man2/alarm.2.html)
-* [Manejar señal ejemplo](./senales-eventos/linux/manejar-senal.c)
+* [`mkfifo`(3)](https://man7.org/linux/man-pages/man3/mkfifo.3.html)
+* [`unlink`(2)](https://man7.org/linux/man-pages/man2/unlink.2.html)
+* [`open`(2)](https://man7.org/linux/man-pages/man2/open.2.html)
+* [`read`(2)](https://man7.org/linux/man-pages/man2/read.2.html)
+* [`write`(2)](https://man7.org/linux/man-pages/man2/read.2.html)
 
-Abrir una terminal y compilar el programa `manejar-senal.c`. 
+Abrir una terminal e ir al directorio donde esta guardado el taller:
 
-> Explicación. Profesor senales
-
-**[Ejercicio 1].** (Carpeta: `./senales-eventos/linux/` Nombre: `senales.c`)
-
-Copie el fichero:
-
-```bash
-cp manejar-senal.c manejar-senal2.c
+```bash 
+cd tuberias-nombradas/linux
+makefile
 ```
 
-Adicione las siguiente señales al programa y el manejador de senales debe indicar cual es la señal capturada:  `SIGHUP`, `SIGQUIT`
+> Explicación. Profesor tuberías nombradas linux
 
-No olvide modificar el fichero `makefile`
-
-> Explicación. Proceso de compilación. Compilación por partes
-
-* [sigaction(2)](https://man7.org/linux/man-pages/man2/sigaction.2.html)
-
-**[Ejercicio 2].** (Carpeta: `./senales-eventos/linux/` Nombre: `manejar-senal2.c`)
-
-Copie el fichero:
+Crear las tuberias
 
 ```bash
-cp manejar-senal.c manejar-senal2.c
+./crear_tuberia
 ```
 
-El programa `manejar-senal2.c` tiene un problema con las señales que son ignoradas, efectivamente son ignoradas, instale capture la señales que se ignora en el proceso.
+Observar las tuberías creadas.
 
-No olvide modificar el fichero `makefile`
+```bash
+ls -l /tmp/tuberia*
+```
 
-## Comunicación de procesos
+Divida la terminal de `tmux`  en dos:
+
+Y ejecute en la primera el servidor:
+
+```bash
+./servidor
+```
+
+En la segunda ejecute el cliente
+
+```bash
+./cliente 1
+```
+
+**[Ejercicio 1].** (Carpeta: `./tuberias-nombradas/linux/` Nombre: `servidor2.c`)
+
+En primer lugar copie el servidor original (`servidor.c`)
+
+```bash
+cp servidor.c servidor2.c
+```
+
+* Formato: `servidor2 [-c] [-p <peticion-nombre>] [-s <solicitud-nombre>]`
+* Descripción: El `servidor2` utiliza los nombres de los tuberías preestablecidas (`/tmp/tuberia_peticion`  y `/tmp/tuberia_solicitud`) si no se le pasa argumento alguno. Si al `servidor2` se le pasa la opción `-c`  este se encarga de crear las tuberías, las opciones `-p`  y `-s` le permiten nombrar las tuberías. El servidor también debe aceptar la señal de terminación  `SIGQUIT` que termina el `servidor2` y borrar las tuberías nombradas.
+* **Nota:** No olvide modificar el fichero `makefile`
+
+**[Ejercicio 2].** (Carpeta: `./tuberias-nombradas/linux/` Nombre: `cliente2.c`)
+
+En primer lugar copie el cliente original (`cliente.c`)
+
+```bash
+cp cliente.c cliente2.c
+```
+
+* Formato: `cliente2 [-c] [-p <peticion-nombre>] [-s <solicitud-nombre>]`
+* Descripción: El `cliente2` utiliza los nombres de tuberías preestablecidas (`/tmp/tuberia_peticion`  y `/tmp/tuberia_solicitud`) si no se le pasa argumento alguno. Si al `servidor2` las opciones `-p`  y `-s` le permiten utilizar otras nombres de tuberías nombradas.
+* **Nota**: No olvidar modificar el fichero `makefile`
+
+### Windows
+
+* [`CreateNamedPipeA`](https://learn.microsoft.com/es-es/windows/win32/api/winbase/nf-winbase-createnamedpipea)
+* [`ConnectNamedPipe`](https://learn.microsoft.com/es-es/windows/win32/api/namedpipeapi/nf-namedpipeapi-connectnamedpipe)
+* [`ReadFile`]()
+* [`WriteFile`]()
+* [`CreateFile`]()
+* [`WaitNamedPipe`]()
+* [`CloseHandle`]()
+
+Abrir una terminal e ir al directorio donde esta guardado el taller:
+
+```bash 
+cd tuberias-nombradas/linux
+makefile servidor_example cliente_example
+```
+
+> Explicación. Tuberías nombradas
+
+## Procesos Demonios (O fuera de sesión)
 
 ### Linux
 
-* [pipe(2)](https://man7.org/linux/man-pages/man2/pipe.2.html)
-* [pipe2(2)](https://man7.org/linux/man-pages/man2/pipe.2.html)
-* [dup](https://man7.org/linux/man-pages/man2/dup.2.html)
-* [dup2](https://man7.org/linux/man-pages/man2/dup.2.html)
+* [`fork`(2)](https://man7.org/linux/man-pages/man2/fork.2.html)
+* [`setsid`(2)](https://man7-org.translate.goog/linux/man-pages/man2/setsid.2.html)
+* [`chdir`(2)](https://man7-org.translate.goog/linux/man-pages/man2/chdir.2.html)
+* [`close`(2)](https://man7.org/linux/man-pages/man2/close.2.html)
 
 * [Conectar procesos](./conectar-procesos/linux/conectar-procesos.c)
 
-> Explicación tuberías en Linux
+> Explicación procesos demonios en linux
 
-**[Ejercicio 3]**. (Carpeta: `./conectar-procesos/linux/` Nombre: `conectar-procesos2.c`)
+### Windows
 
-Copie el fichero:
+> Explicación procesos demonios (servicios) en windows
 
 ```bash
 cp conectar-proceso.c conectar-proceso2.c
 ```
 
-Modifique el programa para utilizar `dup2`.
+## Registro de Eventos
 
-**[Ejercicio 4]**. (Carpeta: `./conectar-procesos/linux/` Nombre: `eco.c`)
-
-* Formato: `eco <nombre-fichero> <cadena-traduccion> <linea-modulo-a-eliminar>`
-* Descripción: Implementar un programa que hace echo. La idea es que el programa`eco` abre un fichero que se le pasa como el primer argumento, y le pasa cada linea a `cat`, este redirige la salida al proceso de `tr` donde el segundo parámetro es la transformación, y la salida de esta es pasada a eco, que se encarga de imprimir cada linea módulo `<linea-modulo-a-eliminar>`.
-
-```mermaid
----
-title: Documento
----
-graph TD;
-  eco --> cat --> tr --> eco
-```
+### Linux
 
 ### Windows
 
-* [CreatePipe](https://learn.microsoft.com/es-es/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)
-* [CreateProcess](https://learn.microsoft.com/es-es/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessa)
-* [conectar-procesos.c](./conectar-procesos/windows/conectar-procesos.c)
+## Servicios
 
-> Explicar de tuberías en Windows
+### Linux
 
-**[Ejercicio 5]**. (Carpeta: `./conectar-procesos/windows/` Nombre: `eco.c`)
+### Windows
 
-* Formato: `eco <nombre-fichero> <cadena-traduccion> <linea-modulo-a-eliminar>`
-* Descripción: Implementar un programa que hace echo. La idea es que el programa`eco` abre un fichero que se le pasa como el primer argumento, y le pasa cada linea a `cat`, este redirige la salida al proceso de `tr` donde el segundo parámetro es la transformación, y la salida de esta es pasada a eco, que se encarga de imprimir cada linea módulo `<linea-modulo-a-eliminar>`.
-
-```mermaid
----
-title: Documento
----
-graph TD;
-  eco --> cat --> tr --> eco
-```
-
-### 
