@@ -7,7 +7,6 @@
 3. Tuberías nombradas
 4. Proceso demonios
 5. Registro de eventos (log)
-6. Servicios
 
 ## Preliminares
 
@@ -124,6 +123,7 @@ En la segunda ejecute el cliente
 En primer lugar copie el servidor original (`servidor.c`)
 
 ```bash
+# En la carpeta ./tuberia-nombradas/linux/
 cp servidor.c servidor2.c
 ```
 
@@ -136,6 +136,7 @@ cp servidor.c servidor2.c
 En primer lugar copie el cliente original (`cliente.c`)
 
 ```bash
+# En la carpeta ./tuberia-nombrada/linux/
 cp cliente.c cliente2.c
 ```
 
@@ -162,7 +163,10 @@ makefile servidor_example cliente_example
 
 > Explicación. Tuberías nombradas
 
-## Procesos Demonios (O fuera de sesión)
+## Procesos demonios - `daemon` (procesos en sesión propia)
+
+Un proceso demonio (o servicio) es un proceso que no está asociado a una sesión de control. Generalmente, todos los proceso que abrimos en consola esta bajo una misma sesión de control. Si esta sesión termina, todos los procesos perteneciente a la sesión son terminados. Un proceso dentro de un sesión se puede escapar, creando su propia sesión, en este caso el proceso se convierte en un proceso demonio (*daemon*).
+Este proceso esta en su propia sesión y se convierte en un proceso de segundo plano.
 
 ### Linux
 
@@ -175,23 +179,54 @@ makefile servidor_example cliente_example
 
 > Explicación procesos demonios en linux
 
-### Windows
+**[Ejercicio 3]**. (Carpeta: `./proceso-demonio/linux` Fichero: `servidor3.c`)
 
-> Explicación procesos demonios (servicios) en windows
+Copie la versión anterior:
 
 ```bash
-cp conectar-proceso.c conectar-proceso2.c
+# En la carpeta ./proceso-demonio/linux
+cp ../../../tuberias-nombradas/linux/servidor2.c servidor3.c
 ```
+
+* Formato: `servidor3 [-d] [-c] [-p <peticion-nombre>] [-s <solicitud-nombre>]`
+* Descripción: El `servidor3` utiliza los nombres de los tuberías preestablecidas (`/tmp/tuberia_peticion`  y `/tmp/tuberia_solicitud`) si no se le pasa argumento alguno. Si al `servidor3` se le pasa la opción `-c`  este se encarga de crear las tuberías, las opciones `-p`  y `-s` le permiten nombrar las tuberías. El servidor también debe aceptar la señal de terminación  `SIGQUIT` que termina el `servidor2` y borrar las tuberías nombradas. El `servidor3`acepta la opción `-d` que permite que el proceso se convierta en un proceso demonio, que permite que el `cliente` del ejercicio anterior se pueda conectar con este servidor, mientras aparece desconectado.
+* **Nota**: No olvidar modificar el fichero `makefile`
+
+### Windows
+
+Windows en sus versiones originales permitia que los proceso consola pudieran desconectarse de su sesión gráficada dominada por el programa [`WinLogon`](https://learn.microsoft.com/es-es/windows/win32/secauthn/winlogon).  A partir de la versión Windows Vista, se encontró que este mecanismo podría conducir a riesgos puesto que un proceso de servicio en Windows podría acceder a funciones del kernel. Ya no es posible hacerlo directamente.
+
+> Explicación procesos demonios (servicios) en windows
 
 ## Registro de Eventos
 
 ### Linux
 
+* [`openlog`(3p)](https://man7.org/linux/man-pages/man3/openlog.3p.html)
+* [`syslog(3)`](https://man7.org/linux/man-pages/man3/syslog.3.html)
+* [`closelog`(3p)](https://man7.org/linux/man-pages/man3/syslog.3.html)
+
+> Explicación de registro de eventos en linux
+
+**[Ejercicio 4]**. (Carpeta: `./registro-servicio/linux` Fichero: `servidor4.c`)
+
+Copie la versión anterior:
+
+```bash
+# En la carpeta ./registro-servicio
+cp ../../proceso-demonio/linux/servidor3.c servidor4.c
+```
+
+* Formato: `servidor4 [-d] [-c] [-p <peticion-nombre>] [-s <solicitud-nombre>]`
+* Descripción: El `servidor4` utiliza los nombres de los tuberías preestablecidas (`/tmp/tuberia_peticion`  y `/tmp/tuberia_solicitud`) si no se le pasa argumento alguno. Si al `servidor3` se le pasa la opción `-c`  este se encarga de crear las tuberías, las opciones `-p`  y `-s` le permiten nombrar las tuberías. El servidor también debe aceptar la señal de terminación  `SIGQUIT` que termina el `servidor2` y borrar las tuberías nombradas. El `servidor3`acepta la opción `-d` que permite que el proceso se convierta en un proceso demonio, que permite que el `cliente` del ejercicio anterior se pueda conectar con este servidor, mientras aparece desconectado. Este servidor imprime los mensajes de inicio, de petición de cada cliente indicado que cliente se ha conectado y la petición, como también el mensaje de terminación todo ello escrito a través del `syslog`.
+* **Nota**: No olvidar modificar el fichero `makefile`
+
 ### Windows
 
-## Servicios
+* [`RegisterEventSourceA`](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-registereventsourcea)
+* [`ReportEventA`](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-registereventsourcea)
+* [`DeregisterEventSource`](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-deregistereventsource)
 
-### Linux
 
-### Windows
 
+​	
