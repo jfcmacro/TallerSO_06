@@ -5,7 +5,7 @@
 1. Preliminares
 2. `tmux`
 3. Tuberías nombradas
-4. Proceso demonios
+4. Servicios
 5. Registro de eventos (log)
 6. Semáforos
 
@@ -164,7 +164,7 @@ makefile servidor_example cliente_example
 
 > Explicación. Tuberías nombradas
 
-## Procesos demonios - `daemon` (procesos en sesión propia)
+## Servicios
 
 Un proceso demonio (o servicio) es un proceso que no está asociado a una sesión de control. Generalmente, todos los proceso que abrimos en consola esta bajo una misma sesión de control. Si esta sesión termina, todos los procesos perteneciente a la sesión son terminados. Un proceso dentro de un sesión se puede escapar, creando su propia sesión, en este caso el proceso se convierte en un proceso demonio (*daemon*).
 Este proceso esta en su propia sesión y se convierte en un proceso de segundo plano.
@@ -176,22 +176,7 @@ Este proceso esta en su propia sesión y se convierte en un proceso de segundo p
 * [`chdir`(2)](https://man7-org.translate.goog/linux/man-pages/man2/chdir.2.html)
 * [`close`(2)](https://man7.org/linux/man-pages/man2/close.2.html)
 
-* [Conectar procesos](./conectar-procesos/linux/conectar-procesos.c)
-
 > Explicación procesos demonios en linux
-
-**[Ejercicio 3]**. (Carpeta: `./proceso-demonio/linux` Fichero: `servidor3.c`)
-
-Copie la versión anterior:
-
-```bash
-# En la carpeta ./proceso-demonio/linux
-cp ../../../tuberias-nombradas/linux/servidor2.c servidor3.c
-```
-
-* Formato: `servidor3 [-d] [-c] [-p <peticion-nombre>] [-s <solicitud-nombre>]`
-* Descripción: El `servidor3` utiliza los nombres de los tuberías preestablecidas (`/tmp/tuberia_peticion`  y `/tmp/tuberia_solicitud`) si no se le pasa argumento alguno. Si al `servidor3` se le pasa la opción `-c`  este se encarga de crear las tuberías, las opciones `-p`  y `-s` le permiten nombrar las tuberías. El servidor también debe aceptar la señal de terminación  `SIGQUIT` que termina el `servidor2` y borrar las tuberías nombradas. El `servidor3`acepta la opción `-d` que permite que el proceso se convierta en un proceso demonio, que permite que el `cliente` del ejercicio anterior se pueda conectar con este servidor, mientras aparece desconectado.
-* **Nota**: No olvidar modificar el fichero `makefile`
 
 ### Windows
 

@@ -1,0 +1,14 @@
+[Unit]
+Description=A example how create a service for systemd
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/systemd-service
+Restart=always
+User=jfcmacro
+Group=jfcmacro
+WorkingDirectory=/home/jfcmacro
+
+[Install]
+# WantedBy=multi-user.target
+WantedBy=default.target
