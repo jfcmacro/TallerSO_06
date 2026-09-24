@@ -7,6 +7,7 @@
 3. Tuberías nombradas
 4. Proceso demonios
 5. Registro de eventos (log)
+6. Semáforos
 
 ## Preliminares
 
@@ -20,7 +21,7 @@ cd talleres
 Descargue el taller en formato zip, descomprimalo.
 
 ```
-wget https://github.com/jfcmacro/TallerSO_06/archive/refs/heads/master.zip
+curl -L -o master.zip https://github.com/jfcmacro/TallerSO_05/archive/refs/heads/master.zip
 unzip master.zip
 rm master.zip
 ```
@@ -227,6 +228,6 @@ cp ../../proceso-demonio/linux/servidor3.c servidor4.c
 * [`ReportEventA`](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-registereventsourcea)
 * [`DeregisterEventSource`](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-deregistereventsource)
 
+## Semáforos
 
-
-​	
+> Explicación profesor tipos de semáforos.
